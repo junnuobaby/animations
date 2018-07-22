@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>重力加速度</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ship.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="400" height="400" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+    var vx = 0;
+    var vy = 0;
+    var vr = 0;
+    var thrust = 0;   //点火时产生的推力
+
+
+    var left = 0;
+    var right = width;
+    var topLimit = 0;
+    var bottom = height;
+
+    var ship = new Ship();
+    ship.x = width/2;
+    ship.y = height/2;
+
+    var friction = 0.97; //摩擦力
+
+
+    window.addEventListener('keydown', function (event) {
+        switch (event.keyCode) {
+
+            case 37:         //left
+                vr = -3;
+                break;
+            case 39:         //right
+                vr = 3;
+                break;
+            case 38:         //up
+                thrust = 0.01;
+                ship.showFlame = true;
+                break;
+        }
+        if (event.keyCode === 37) {   //left
+            ax = -0.05;
+        } else if (event.keyCode === 39) {   //right
+            ax = 0.05;
+        }
+    }, false);
+
+    window.addEventListener('keyup', function () {
+        thrust = 0;
+        ship.showFlame = false;
+        vr = 0;
+    }, false);
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+
+        ship.rotation += vr * Math.PI /180;
+
+        var angle = ship.rotation;
+        var ax = thrust * Math.cos(angle);
+        var ay = thrust * Math.sin(angle);
+
+
+        vx += ax;
+        vy += ay;
+        vx *= friction;
+        vy *= friction;
+
+        ship.x += vx;
+        ship.y += vy;
+
+        if (ship.x - ship.width/2 > right ) {
+            ship.x = left - ship.width / 2;
+        }
+        else if ( ship.x + ship.width / 2 < left ){
+            ship.x = right + ship.width / 2;
+        }
+
+        if (ship.y - ship.height/2 > bottom) {
+            ship.y = topLimit - ship.height / 2;
+        }
+        else if ( ship.y + ship.height/2 < topLimit) {
+            ship.y = bottom + ship.height / 2;
+        }
+
+        ship.draw(context);
+    })();
+</script>

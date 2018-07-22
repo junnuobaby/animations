@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>迷幻闪光灯</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="400" height="400" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+    var mouse = Utils.captureMouse(canvas);
+
+    (function drawFrame() {
+        requestAnimationFrame(drawFrame);
+
+        for (var i = 0; i < width; i += 10) {
+            for (var j =0; j < height; j+=10) {
+                context.fillStyle = (i % 20 === 0) ? "#f00" : ((i % 30 === 0) ? "0f0" : "#00f");
+                context.fillRect(i, j, 10, 10);
+            }
+        }
+
+        var imageData = context.getImageData(0, 0, width, height);
+        var pixels = imageData.data;
+
+        for (var y = 0; y < imageData.height; y += 1) {
+
+            for (var x = 0; x < imageData.width; x += 1) {
+
+                var dx = x - mouse.x;
+                var dy = y - mouse.y;
+                var dist = Math.sqrt(dx * dx + dy * dy);
+                var offset = (x + y * imageData.width) * 4;
+
+                var r = pixels[offset];
+                var g = pixels[offset + 1];
+                var b = pixels[offset + 2];
+
+                pixels[offset] = Math.cos(r * dist * 0.001) * 256;
+                pixels[offset + 1] = Math.sin(g * dist * 0.001) * 256;
+                pixels[offset + 1] = Math.cos(b * dist * 0.005) * 256;
+
+            }
+        }
+        context.putImageData(imageData, 0, 0);
+
+
+    })()
+
+
+
+</script>

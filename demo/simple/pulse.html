@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>脉冲运动</title>
+    <script src="/lib/ball.js"></script>
+    <style>
+        body {
+           background: #000;
+        }
+        canvas {
+            border: 1px solid #4f4f4f;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="500" height="500" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var maxRadius = 100;
+    var circleNum = 5;
+    var radius = 10;
+    var speed = 0.5;
+
+    var balls = [];
+    var newball;
+
+
+
+    for(var i = 0; i < circleNum; i++) {
+        newball = new Ball(radius + i * maxRadius / circleNum);
+        newball.x = width/2;
+        newball.y = height/2;
+        newball.lineWidth = 0;
+        balls.push(newball);
+    }
+
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+
+        balls.forEach(function (ball) {
+
+            if ( maxRadius - ball.radius  > 0.01) {
+                ball.radius += speed;
+                ball.alpha = (maxRadius - ball.radius) / maxRadius;
+            } else {
+                ball.radius = radius;
+                ball.alpha = 1;
+            }
+            ball.color = 'rgba(255, 0, 0, ' + ball.alpha + ')';
+            ball.draw(context);
+        });
+    })();
+
+
+</script>

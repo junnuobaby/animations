@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>圆碰撞检测</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="400" height="400" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var gravity = 0.1;
+    var balls = [];
+    var activeBox = createBox();
+
+    var isDown = true;
+    var animation;
+
+    function createBox() {
+        var ball = new Ball(10);
+        ball.x = Math.random() * width + 10;
+        balls.push(ball);
+        return ball;
+    }
+
+    function drawBox(box) {
+        if(activeBox !== box && Utils.intersects(activeBox.getBounds(), box.getBounds())) {
+            activeBox.y = box.y - 2 * activeBox.radius;
+
+            if (activeBox.y < activeBox.radius) {
+                window.cancelAnimationFrame(animation);
+            }
+
+            isDown = false;
+        }
+        box.draw(context);
+    }
+
+    (function drawFrame() {
+        animation = window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+
+        activeBox.vy += gravity;
+        activeBox.y += activeBox.vy;
+
+        if (activeBox.y + activeBox.radius > height) {
+            activeBox.y = height - activeBox.radius;
+            activeBox = createBox();
+        }
+
+        balls.forEach(drawBox);
+
+        if (!isDown) {
+            activeBox = createBox();
+            isDown = true;
+        }
+
+    })();
+
+
+</script>

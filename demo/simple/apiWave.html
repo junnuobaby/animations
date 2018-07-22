@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>使用绘图API产生的波</title>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="200" height="200" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+    var angle = 0;
+    var range = 50;
+    var centerY = height/2;
+    var xSpeed = 1;
+    var ySpeed = 0.05;
+    var xPos = 0;
+    var yPos = centerY;
+
+
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+
+        if (xPos > width) {
+            context.clearRect(0, 0, width, height);
+            xPos = 0;
+            angle = 0;
+            yPos = centerY;
+        }
+
+        context.beginPath();
+        context.moveTo(xPos, yPos);
+        xPos += xSpeed;
+        angle += ySpeed;
+
+        yPos = centerY + Math.sin(angle) * range;
+        context.lineTo(xPos, yPos);
+        context.stroke();
+    })();
+</script>

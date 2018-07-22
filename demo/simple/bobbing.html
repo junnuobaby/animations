@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>平滑的上下运动</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="200" height="200" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+    var angle = 0;
+    var range = 50;
+    var speed = 0.05;
+
+
+    var ball = new Ball(10);
+    ball.x = width / 2;
+    ball.y = height / 2;
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+
+        ball.y = height/2 + Math.sin(angle) * range;
+        angle += speed;
+        ball.draw(context);
+    })();
+</script>

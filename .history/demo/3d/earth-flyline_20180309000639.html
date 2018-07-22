@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/vendor/three.js"></script>
+    <script src="/vendor/jquery.min.js"></script>
+    <style>
+        body {
+            /*background: url("./image/star.jpeg");*/
+            /*background-size: cover;*/
+            /*background-repeat: no-repeat;*/
+            /*top: 0;*/
+            /*left: 0;*/
+            /*right: 0;*/
+        }
+
+        canvas {
+        }
+    </style>
+</head>
+<body>
+
+<div id="earth"></div>
+
+</body>
+</html>
+
+
+<script>
+
+    var airPlace = [
+        {
+            latitude: 35.350525,
+            longtitude: -116.888367	,
+        },
+        {
+            latitude: 44.304283	,
+            longtitude: -89.050111	,
+        },
+        {
+            latitude: 42.60825,
+            longtitude: -112.032461	,
+        },
+        {
+            latitude: 30.722639,
+            longtitude: -91.077361	,
+        },
+        {
+            latitude: 35.350525,
+            longtitude: -114.880436	,
+        },
+        {
+            latitude: 35.350525,
+            longtitude: -73.261944	,
+        },
+        {
+            latitude: 35.350525,
+            longtitude: -73.261944	,
+        },
+        {
+            latitude: 34.825861	,
+            longtitude: -90.543333,
+        },
+        {
+            latitude: 64.911389,
+            longtitude:-23.82305,
+        },
+        {
+            latitude: 45.2075	,
+            longtitude: -67.250556	,
+        },
+        {
+            latitude: -4.325,
+            longtitude: 15.325,
+        },
+        {
+            latitude: 0.022542,
+            longtitude: 18.288756,
+        },
+
+    ];
+    
+    function getPos(v){
+        var theta = (v.lng+180)*(Math.PI/180),
+            phi = (90-v.lat)*(Math.PI/180),
+            radius = v.r;
+        return (new THREE.Vector3()).setFromSpherical(new THREE.Spherical(radius,phi,theta));
+    }
+
+    var earthRadius = 36;
+
+    $(function () {
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+
+        var renderer = new THREE.WebGLRenderer({antialias: true});
+        renderer.setClearColor(0X111111);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+
+        // 添加坐标轴
+        var axes = new THREE.AxisHelper(20);
+//        scene.add(axes);
+
+
+        // 添加球体
+        var loader = new THREE.TextureLoader();
+        var texture = loader.load("/qc/image/earth.jpeg");
+        var material = new THREE.MeshBasicMaterial({
+            map: texture,
+            overdraw: 0.5
+        });
+
+        var sphereGeometry = new THREE.SphereGeometry(earthRadius, 50, 50);
+        var sphere = new THREE.Mesh(sphereGeometry, material);
+        sphere.position.x = 0;
+        sphere.position.y = 0;
+        sphere.position.z = 0;
+        scene.add(sphere);
+
+
+        //添加云层
+        var cloudTexture = loader.load("/qc/image/cloud.png");
+        var cloudMaterial = new THREE.MeshBasicMaterial({
+            map: cloudTexture,
+            overdraw: 0.5,
+            transparent: true
+        });
+
+        var cloudGeometry = new THREE.SphereGeometry(earthRadius + 5, 50, 50);
+        var cloudSphere = new THREE.Mesh(cloudGeometry, cloudMaterial);
+        cloudSphere.position.x = 0;
+        cloudSphere.position.y = 0;
+        cloudSphere.position.z = 0;
+//        scene.add(cloudSphere);
+
+
+        //添加灯光
+        var spotLight = new THREE.SpotLight(0xffffff);
+        spotLight.position.set(-40, 60, -10);
+//        scene.add(spotLight);
+
+        
+        var pointGeom = new THREE.Geometry();
+        airPlace.forEach(function (d) {
+            var lng = parseFloat(d.longtitude);
+            var lat = parseFloat(d.latitude);
+            pointGeom.vertices.push(getPos({
+                lng: lng,
+                lat: lat,
+                r: earthRadius
+            }));
+        });
+
+        var pointMaterial = new THREE.PointsMaterial({
+            color:0x0ff0cc
+        });
+        var pointsSystem = new THREE.Points(pointGeom,pointMaterial);
+        scene.add(pointsSystem);
+
+        camera.position.z = 100;
+        camera.lookAt(scene.position);
+
+
+        $('#earth').append(renderer.domElement);
+//        renderer.render(scene, camera);
+        
+        
+        (function draw() {
+            requestAnimationFrame(draw);
+            sphere.rotation.y -= 0.002;
+            pointsSystem.rotation.y -= 0.002;
+            renderer.render(scene, camera);
+        })();
+    });
+
+</script>

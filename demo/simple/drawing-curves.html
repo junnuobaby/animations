@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用鼠标画画</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="200" height="200" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var mouse = Utils.captureMouse(canvas);
+    var x0 = 0,
+        y0 = 100,
+        x2 = 200,
+        y2 = 100;
+
+    canvas.addEventListener('mousemove', function () {
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        var x1 = mouse.x,
+            y1 = mouse.y;
+
+        context.beginPath();
+        context.moveTo(x0, y0);
+        context.quadraticCurveTo(x1, y1, x2, y2);
+        context.stroke();
+
+    }, false);
+
+</script>

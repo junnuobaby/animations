@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/vendor/three.js"></script>
+    <script src="/vendor/jquery.min.js"></script>
+</head>
+<body>
+
+<div id="earth"></div>
+
+</body>
+</html>
+
+
+<script>
+
+    $(function () {
+        //创建场景
+        var scene = new THREE.Scene();
+
+        //设置相机（视野、显示口的宽高比，进裁剪面，远裁剪面）
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        //设置相机的视点
+        camera.position.set(0, 0, 150);
+        //设置相机的朝向
+        camera.lookAt(scene.position);
+
+        //渲染器
+        var renderer = new THREE.WebGLRenderer({antialias: true});
+        renderer.setClearColor(0X000000);
+        //设置渲染器的高度和宽度，如果加上第三个值 false，则按场景大小显示，等比例缩放
+        renderer.setSize(window.innerWidth, window.innerHeight, false);
+
+        //将渲染器添加到html当中
+        $('#earth').append(renderer.domElement);
+
+
+        //定义线的基本材料，可以使用LineBasicMaterial（实线材料）和LineDashedMaterial（虚线材料）
+        var material = new THREE.LineBasicMaterial({
+            color: 0xffffff
+        });
+
+        var geometry = new THREE.Geometry();
+        geometry.vertices.push(new THREE.Vector3(-50, 0, 0));
+        geometry.vertices.push(new THREE.Vector3(0, 50, 0));
+        geometry.vertices.push(new THREE.Vector3(50, 0, 0));
+
+        //使用Line方法将线进行实例化
+        var line = new THREE.Line(geometry, material);
+        scene.add(line);
+        
+        (function draw() {
+            requestAnimationFrame(draw);
+            renderer.render(scene, camera);   //使用渲染器渲染出场景和相机
+        })();
+
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

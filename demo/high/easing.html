@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>简单缓动</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="400" height="400" id="canvas"></canvas>
+</div>
+
+<div>
+    <h5>缓动的实现策略：</h5>
+    <ol>
+        <li>为运动确定一个比例系数，这是一个小于1且大于0的小数</li>
+        <li>确定目标点</li>
+        <li>计算出物体与目标点的距离</li>
+        <li>计算速度，速度 = 距离 * 比例系数</li>
+        <li>用当前位置加上速度来计算新的位置</li>
+        <li>重复第3步到第5步，直到物体到达目标</li>
+    </ol>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var ball = new Ball(10);
+
+    var easing = 0.01;
+    var targetX = width / 2;
+    var targetY = height / 2;
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+
+        var vx = ( targetX - ball.x) * easing;
+        var vy = ( targetY - ball.y) * easing;
+
+        ball.x += vx;
+        ball.y += vy;
+
+        ball.draw(context);
+    })();
+</script>

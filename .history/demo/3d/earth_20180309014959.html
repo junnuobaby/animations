@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/vendor/three.js"></script>
+    <script src="/vendor/jquery.min.js"></script>
+    <style>
+        body {
+            /*background: url("./image/star.jpeg");*/
+            /*background-size: cover;*/
+            /*background-repeat: no-repeat;*/
+            /*top: 0;*/
+            /*left: 0;*/
+            /*right: 0;*/
+        }
+
+        canvas {
+        }
+    </style>
+</head>
+<body>
+
+<div id="earth"></div>
+
+</body>
+</html>
+
+
+<script>
+
+    $(function () {
+        //创建场景
+        var scene = new THREE.Scene();
+
+        //设置相机（视野、显示口的宽高比，进裁剪面，远裁剪面）
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        //设置相机的视点
+        camera.position.set(0, 0, 150);
+        //设置相机的朝向
+        camera.lookAt(scene.position);
+
+        //渲染器
+        var renderer = new THREE.WebGLRenderer({antialias: true});
+        renderer.setClearColor(0X000000);
+        //设置渲染器的高度和宽度，如果加上第三个值 false，则按场景大小显示，等比例缩放
+        renderer.setSize(window.innerWidth, window.innerHeight, false);
+
+        //将渲染器添加到html当中
+        $('#earth').append(renderer.domElement);
+
+        // 添加球体和地表纹理
+        var loader = new THREE.TextureLoader();
+        var texture = loader.load("/3d/image/earth.jpeg");
+        var material = new THREE.MeshBasicMaterial({
+            map: texture,
+            overdraw: 0.5
+        });
+
+        var sphereGeometry = new THREE.SphereGeometry(36, 50, 50);
+        var sphere = new THREE.Mesh(sphereGeometry, material);
+        sphere.position.x = 0;
+        sphere.position.y = 0;
+        sphere.position.z = 0;
+        scene.add(sphere);
+
+
+        //添加云层
+        var cloudTexture = loader.load("/3d/image/cloud.png");
+        var cloudMaterial = new THREE.MeshBasicMaterial({
+            map: cloudTexture,
+            overdraw: 0.5,
+            transparent: true
+        });
+
+        var cloudGeometry = new THREE.SphereGeometry(41, 50, 50);
+        var cloudSphere = new THREE.Mesh(cloudGeometry, cloudMaterial);
+        cloudSphere.position.x = 0;
+        cloudSphere.position.y = 0;
+        cloudSphere.position.z = 0;
+        scene.add(cloudSphere);
+
+
+        //添加灯光
+        var spotLight = new THREE.SpotLight(0xffffff);
+        spotLight.position.set(-40, 60, -10);
+//        scene.add(spotLight);
+        
+        
+        (function draw() {
+            requestAnimationFrame(draw);
+            sphere.rotation.y -= 0.002;
+            renderer.render(scene, camera);
+        })();
+    });
+
+</script>

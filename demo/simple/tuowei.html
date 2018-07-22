@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>波形运动</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="200" height="200" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+    var angleX = 0;
+    var angleY = 0;
+    var range = 50;
+    var centerX = width/2;
+    var centerY = height/2;
+    var xSpeed = 0.05;
+    var ySpeed = 0.1;
+
+
+    var ball = new Ball(10);
+    ball.strokeColor = 'rgba(0,0,0,0)';
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+
+//      使用半透明的白色背景填充画布来代替直接清除这个画布，从而实现了想要的拖尾效果
+        context.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        context.fillRect(0, 0, width, height);
+
+        ball.x = centerX + Math.sin(angleX) * range;
+        ball.y = centerY + Math.sin(angleY) * range;
+        angleX += xSpeed;
+        angleY += ySpeed;
+        ball.draw(context);
+    })();
+
+</script>

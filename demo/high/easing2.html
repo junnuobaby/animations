@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>拖拽加缓动</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="400" height="400" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var ball = new Ball(10);
+    var mouse = Utils.captureMouse(canvas);
+
+    var mouseDown = false;
+
+    var easing = 0.01;
+    var targetX = width / 2;
+    var targetY = height / 2;
+
+    var animRequest;
+
+
+
+    canvas.addEventListener('mousedown', function () {
+        if (Utils.containsPoint(ball.getBounds(), mouse.x, mouse.y)) {
+            mouseDown = true;
+            canvas.addEventListener('mousemove', onMouseMove, false);
+            canvas.addEventListener('mouseup', onMouseUp, false);
+        }
+
+    });
+
+    function onMouseUp() {
+        mouseDown = false;
+        drawFrame();
+        canvas.removeEventListener('mousemove', onMouseMove, false);
+        canvas.removeEventListener('mouseup', onMouseUp, false);
+    }
+
+
+    function onMouseMove() {
+        ball.x = mouse.x;
+        ball.y = mouse.y;
+    }
+
+    function drawFrame() {
+        animRequest = window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+
+        var dist = Utils.getDistance(ball.x, ball.y, targetX, targetY);
+
+        if (!mouseDown) {
+            if (dist < 1) {
+                ball.x = targetX;
+                ball.y = targetY;
+                window.cancelAnimationFrame(animRequest);
+
+            } else {
+                var vx = ( targetX - ball.x) * easing;
+                var vy = ( targetY - ball.y) * easing;
+                ball.x += vx;
+                ball.y += vy;
+            }
+        }
+
+        ball.draw(context);
+    }
+
+    drawFrame();
+
+</script>

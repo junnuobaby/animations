@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>箭头指向鼠标(带有速度)</title>
+    <script src="/lib/utils.js"></script>
+    <script src="lib/arrow.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="800" height="700" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+    var mouse = Utils.captureMouse(canvas);
+    var force = 0.05;
+    var vx = 0;
+    var vy = 0;
+
+    var arrow = new Arrow();
+    arrow.x = width/2;
+    arrow.y = height/2;
+    arrow.draw(context);
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+
+        var dx = mouse.x - arrow.x;
+        var dy = mouse.y - arrow.y;
+        var angle = Math.atan2(dy, dx);
+
+        var ax = Math.cos(angle) * force;
+        var ay = Math.sin(angle) * force;
+
+        vx += ax;
+        vy += ay;
+
+        arrow.rotation = angle;
+        arrow.x += vx;
+        arrow.y += vy;
+        arrow.draw(context);
+
+    })();
+
+
+</script>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>鼠标拖拽小球</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="200" height="200" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var ball = new Ball(10);
+    ball.x = width / 2;
+    ball.y = height / 2;
+
+    var mouse = Utils.captureMouse(canvas);
+
+
+    function mouseup() {
+        canvas.removeEventListener('mouseup', mouseup, false);
+        canvas.removeEventListener('mousemove', mousemove, false);
+    }
+
+
+    function mousemove() {
+        ball.x = mouse.x;
+        ball.y = mouse.y;
+    }
+
+    canvas.addEventListener('mousedown', function () {
+        if (Utils.containsPoint(ball.getBounds(), mouse.x , mouse.y)) {
+            canvas.addEventListener('mouseup', mouseup, false);
+            canvas.addEventListener('mousemove', mousemove, false);
+        }
+    });
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+        ball.draw(context);
+
+    })();
+
+</script>

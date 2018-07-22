@@ -1,0 +1,26 @@
+
+body {
+    box-sizing: content-box;
+}
+
+iframe {
+    width: 200px;
+    height: 200px;
+}
+
+.demo {
+    display: inline-block;
+    margin-right: 50px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+a, a:link {
+    color: #1a0dab;
+    text-decoration: none;
+}
+
+a:hover,a:visited, a:active {
+    color: #1a0dab;
+    text-decoration: underline;
+}

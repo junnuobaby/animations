@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>喷泉效果</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="400" height="400" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+
+
+    var balls = [];
+    var ballNum = 80;
+    var gravity = 0.5;
+
+    for (var i =0; i < ballNum; i++) {
+        var ball = new Ball(2, Math.random() * 0xFFFFFF);
+        ball.x = width / 2;
+        ball.y = height;
+        ball.vx = Math.random() * 2 - 1;
+        ball.vy = Math.random() * (-10) - 10;
+        balls.push(ball);
+    }
+
+
+    function draw(ball) {
+        ball.vy += gravity;
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+        if ((ball.x - ball.radius > width) || ball.x + ball.radius < 0 || (ball.y - ball.radius > width) || ball.y + ball.radius < 0 ) {
+            ball.x = width / 2;
+            ball.y = height;
+            ball.vx = Math.random() * 2 - 1;
+            ball.vy = Math.random() * (-10) - 10;
+        }
+        ball.draw(context);
+    }
+
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+        balls.forEach(draw);
+    })();
+
+
+</script>

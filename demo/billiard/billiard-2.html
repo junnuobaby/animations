@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>双轴上的动量守恒</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <script src="/lib/line.js"></script>
+    <style>
+        body {
+            background: #000;
+        }
+        canvas {
+            border: 1px solid rgba(221, 221, 221, 0.55);
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="800" height="600" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var bounce = -1;
+
+    var ball0 = new Ball(50);
+    var ball1 = new Ball(20);
+
+    ball0.mass = 2;
+    ball0.x = width - 200;
+    ball0.y = height - 200;
+    ball0.vx = Math.random() * 10 -5;
+    ball0.vy = Math.random() * 10 -5;
+
+    ball1.mass = 1;
+    ball1.x = 100;
+    ball1.y = 100;
+    ball1.vx = Math.random() * 10 -5;
+    ball1.vy = Math.random() * 10 -5;
+
+
+    function rotate(x, y, sin, cos, reverse) {
+        return {
+            x: (reverse) ? (x * cos + y * sin) : (x * cos - y * sin),
+            y: (reverse) ? (y * cos - x * sin) : (y * cos + x * sin),
+        }
+    }
+
+    function checkCollision(ball0, ball1) {
+
+        var dx = ball1.x - ball0.x;
+        var dy = ball1.y - ball0.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < ball0.radius + ball1.radius) {
+
+            var angle = Math.atan2(dy, dx);
+            var sin = Math.sin(angle);
+            var cos = Math.cos(angle);
+
+            var pos0 = {
+                x: 0,
+                y: 0
+            };
+
+            var pos1 = rotate(dx, dy, sin, cos, true);
+
+            var vel0 = rotate(ball0.vx, ball0.vy, sin, cos, true);
+            var vel1 = rotate(ball1.vx, ball1.vy, sin, cos, true);
+
+            var vxTotal = vel0.x - vel1.x;
+            vel0.x = ((ball0.mass - ball1.mass) * vel0.x + 2 * ball1.mass * vel1.x) / (ball0.mass + ball1.mass);
+            vel1.x = vxTotal + vel0.x;
+
+            pos0.x += vel0.x;
+            pos1.x += vel1.x;
+
+            //将旋转后得到的位置与速度，旋转归位
+            var pos0Final = rotate(pos0.x, pos0.y, sin, cos, false);
+            var pos1Final = rotate(pos1.x, pos1.y, sin, cos, false);
+
+            ball0.x = ball0.x + pos0Final.x;
+            ball0.y = ball0.y + pos0Final.y;
+            ball1.x = ball0.x + pos1Final.x;
+            ball1.y = ball0.y + pos1Final.y;
+
+            var vel0Final = rotate(vel0.x, vel0.y, sin, cos, false);
+            var vel1Final = rotate(vel1.x, vel1.y, sin, cos, false);
+
+            ball0.vx =vel0Final.x;
+            ball0.vy =vel0Final.y;
+            ball1.vx =vel1Final.x;
+            ball1.vy =vel1Final.y;
+        }
+    }
+
+    function checkWalls(ball) {
+        if (ball.x + ball.radius > canvas.width) {
+            ball.x = canvas.width - ball.radius;
+            ball.vx *= bounce;
+        } else if (ball.x - ball.radius < 0) {
+            ball.x = ball.radius;
+            ball.vx *= bounce;
+        }
+        if (ball.y + ball.radius > canvas.height) {
+            ball.y = canvas.height - ball.radius;
+            ball.vy *= bounce;
+        } else if (ball.y - ball.radius < 0) {
+            ball.y = ball.radius;
+            ball.vy *= bounce;
+        }
+
+    }
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+
+        ball0.x += ball0.vx;
+        ball0.y += ball0.vy;
+        ball1.x += ball1.vx;
+        ball1.y += ball1.vy;
+
+        checkCollision(ball0, ball1);
+        checkWalls(ball0);
+        checkWalls(ball1);
+
+        ball0.draw(context);
+        ball1.draw(context);
+
+    })();
+
+
+</script>

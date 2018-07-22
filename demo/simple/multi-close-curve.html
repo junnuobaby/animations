@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用鼠标画画</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="200" height="200" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var points =[];
+    var numPoints = 9;
+    var endPoint = {};
+
+    for (var i = 0; i < numPoints; i++) {
+        points.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+        });
+    }
+
+    var startPoint = {
+        x: (points[0].x + points[numPoints-1].x) / 2,
+        y: (points[0].y + points[numPoints-1].y) / 2,
+    };
+
+    context.beginPath();
+    context.moveTo(startPoint.x, startPoint.y);
+
+    for(i = 0; i < numPoints - 1; i++) {
+        endPoint.x = (points[i].x + points[i+1].x) / 2;
+        endPoint.y = (points[i].y + points[i+1].y) / 2;
+        context.quadraticCurveTo(points[i].x, points[i].y, endPoint.x, endPoint.y);
+    }
+
+    context.quadraticCurveTo(points[i].x, points[i].y, startPoint.x, startPoint.y);
+    context.stroke();
+
+</script>

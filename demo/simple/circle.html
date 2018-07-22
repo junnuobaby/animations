@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>波形运动</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="200" height="200" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+    var angle = 0;
+    var centerX = width/2;
+    var centerY = height/2;
+    var speed = 0.01;
+    var radius = 50;
+
+
+    var ball = new Ball(10);
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+
+        context.beginPath();
+        context.arc(centerX, centerY, radius, 0, Math.PI * 2, true);
+        context.closePath();
+        context.stroke();
+
+        ball.x = centerX + Math.sin(angle) * radius;
+        ball.y = centerY + Math.cos(angle) * radius;
+        angle += speed;
+        ball.draw(context);
+    })();
+</script>

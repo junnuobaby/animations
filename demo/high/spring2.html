@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>淡出的效果</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="200" height="200" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var ball = new Ball(10);
+    ball.y = height / 2;
+
+    var spring = 0.01;
+    var targetX = width / 2;
+    var vx = 0;
+    var ax = 0;
+
+    var friction = 0.98;
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+
+        var dx = targetX - ball.x;
+        ax = dx * spring;
+
+        vx += ax;
+        vx *= friction;
+        ball.x += vx;
+        ball.draw(context);
+    })();
+</script>

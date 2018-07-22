@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>喷漆效果</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="400" height="400" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+    var mouse = Utils.captureMouse(canvas);
+    var imageData = context.getImageData(0, 0, width, height);
+    var pixels = imageData.data;
+    var brushSize = 10;
+    var brushDensity = 100;
+    var brushColor;
+
+    canvas.addEventListener('mousedown', function () {
+        brushColor = Utils.parseColor(Math.random() * 0xffffff, true);
+        canvas.addEventListener('mousemove', onMouseMove, false);
+    });
+
+    canvas.addEventListener('mouseup', function () {
+        canvas.addEventListener('mousemove', onMouseMove, false);
+    });
+
+    function onMouseMove() {
+
+        for (var i = 0; i < brushDensity; i++) {
+
+            var angle = Math.random() * Math.PI * 2;
+            var radius = Math.random() * brushSize;
+            var xPos = (mouse.x + Math.cos(angle) * radius) | 0;
+            var yPos = (mouse.y + Math.sin(angle) * radius) | 0;
+            var offset = (xPos + yPos * imageData.width) * 4;
+
+            pixels[offset] = brushColor >> 16 & 0xff;
+            pixels[offset+1] = brushColor >> 8 & 0xff;
+            pixels[offset+2] = brushColor & 0xff;
+            pixels[offset+3] = 255;
+        }
+        context.putImageData(imageData, 0, 0);
+    }
+
+
+</script>

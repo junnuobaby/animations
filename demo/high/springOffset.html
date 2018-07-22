@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>目标偏移量</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="400" height="400" id="canvas"></canvas>
+</div>
+
+<h5>目标偏移量</h5>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var ball = new Ball(10);
+    var mouse = Utils.captureMouse(canvas);
+
+    var spring = 0.01;
+    var vx = 0;
+    var ax = 0;
+    var vy = 0;
+    var ay = 0;
+    var friction = 0.98;  //摩擦力
+    var gravity = 1;      //重力
+    var springLen = 50;
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+
+        var dx = mouse.x - ball.x;
+        var dy = mouse.y - ball.y;
+
+        var angle = Math.atan2(dy, dx);
+        var targetX = mouse.x + Math.cos(angle) * springLen;
+        var targetY = mouse.y + Math.sin(angle) * springLen;
+
+        ax = (targetX - ball.x) * spring;
+        ay = (targetY - ball.y) * spring;
+
+        vx += ax;
+        vx *= friction;
+        ball.x += vx;
+
+        vy += ay;
+        vy += gravity;
+        vy *= friction;
+        ball.y += vy;
+
+        context.beginPath();
+        context.moveTo(ball.x, ball.y);
+        context.lineTo(mouse.x, mouse.y);
+        context.closePath();
+        context.stroke();
+
+        ball.draw(context);
+    })();
+</script>

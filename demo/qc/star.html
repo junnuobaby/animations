@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>闪烁星星</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        body {
+            background: #000;
+        }
+
+        canvas {
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="1300" height="800" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+    var range = 0.5;
+    var balls = [];
+    var ballNum = 200;
+
+    for (var i = 0; i < ballNum; i++) {
+        var size = Math.random() * 3;
+        var ball = new Ball(size);
+        ball.x = Math.random() * width;
+        ball.y = Math.random() * height;
+        ball.lineWidth = 0;
+        ball.centerScale = Math.random();
+        ball.angle = Math.random() * 100;
+        ball.speed = Math.random() / 20;
+        ball.shadowBlur = 3;
+        ball.shadowColor = '#45dfff';
+        balls.push(ball);
+    }
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+
+        balls.forEach(function (ball) {
+            ball.angle += ball.speed;
+            ball.scaleX = ball.scaleY = ball.centerScale + Math.sin(ball.angle) * range ;
+            ball.color =  Utils.colorToRGB('#1883ff', Math.sin(ball.angle) * range + ball.centerScale) ;
+            ball.draw(context);
+        });
+
+    })();
+</script>

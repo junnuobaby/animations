@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>旋转多个物体</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <script src="/lib/line.js"></script>
+    <style>
+        body {
+            background: #000;
+        }
+        canvas {
+            border: 1px solid rgba(221, 221, 221, 0.55);
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="800" height="600" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var ball = new Ball(15);
+    var line = new Line(0, 0,300, 0);
+    var gravity = 0.2;
+    var bounce = -0.6;
+
+    var mouse = Utils.captureMouse(canvas);
+    var bounds = line.getBounds();
+
+    ball.x = 100;
+    ball.y = 100;
+
+    line.x = 50;
+    line.y = 200;
+    line.rotation = 15 * Math.PI / 180;
+
+    var cos = Math.cos(line.rotation);
+    var sin = Math.sin(line.rotation);
+
+    (function drawFrame() {
+        animation = window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+
+        line.rotation = ((width / 2 - mouse.x) * 0.1) * Math.PI / 180;
+        cos = Math.cos(line.rotation);
+        sin = Math.sin(line.rotation);
+
+        ball.vy += gravity;
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+
+
+        if (ball.x + ball.radius > bounds.x && ball.x - ball.radius < bounds.x + bounds.width) {
+            var x1 = ball.x - line.x;
+            var y1 = ball.y - line.y;
+            var y2 = y1 * cos - x1 * sin;
+            var vy1 = ball.vy * cos - ball.vx * sin;
+
+            if (y2 > -ball.radius && y2 < vy1) {
+
+                var x2 = x1 * cos + y1 * sin;
+                var vx1 = ball.vx * cos + ball.vy * sin;
+
+                y2 = -ball.radius;
+                vy1 *= bounce;
+
+                x1 = x2 * cos - y2 * sin;
+                y1 = y2 * cos + x2 * sin;
+
+                ball.vx = vx1 * cos - vy1 * sin;
+                ball.vy = vy1 * cos + vx1 * sin;
+                ball.x = line.x + x1;
+                ball.y = line.y + y1;
+            }
+        }
+        ball.draw(context);
+        line.draw(context);
+    })();
+
+</script>

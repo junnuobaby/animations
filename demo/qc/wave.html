@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/wave.js"></script>
+    <title>使用绘图API产生的波</title>
+    <style>
+        body {
+            background: #000;
+        }
+        canvas {
+
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="1350" height="800" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+    var angle = 0;
+    var range = 50;
+    var centerY = height/5;
+    var xSpeed = 10;
+    var ySpeed = 0.1;
+
+    var waves = [];
+    var waveNum = 10;
+
+    for(var i = 0; i < waveNum; i++) {
+        var yPos = centerY + i * 50;
+        var wave = new Wave(0, yPos);
+        var color = 0xFFFF88 * Math.random() * 300;
+        wave.strokeColor = Utils.colorToRGB(color);
+        wave.centerY = yPos;
+        wave.shadowBlur = 15;
+        waves.push(wave);
+    }
+
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+
+        angle += ySpeed;
+
+        for (var i = 0; i < waves.length; i++) {
+            waves[i].nextX = waves[i].currentX + xSpeed;
+            waves[i].nextY = waves[i].centerY + range * Math.sin(angle);
+
+            if (waves[i].nextX > width) {
+                context.clearRect(0, 0, width, height);
+                angle = 0;
+                waves.forEach(function (wave) {
+                    wave.currentX = wave.startX;
+                    wave.currentY = wave.startY;
+                });
+                break;
+            }
+            waves[i].draw(context);
+        }
+
+
+    })();
+</script>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>相连的节点</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        body {
+            background: #000;
+        }
+        canvas {
+            /*border: 1px solid rgba(221, 221, 221, 0.55);*/
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="1200" height="800" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var particles = [];
+    var numParticles = 20;
+
+    var minDist = 300;
+    var springAmount = 0.000000001;
+
+    for (var particle, i = 0; i < numParticles; i++) {
+        particle = new Ball(5);
+        particle.x = Math.random() * width;
+        particle.y = Math.random() * height;
+        particle.vx = Math.random() * 4 - 3;
+        particle.vy = Math.random() * 4 - 3;
+        particles.push(particle);
+    }
+
+    function draw(particle) {
+        particle.draw(context);
+    }
+
+    function spring(partA, partB) {
+        var dx = partB.x - partA.x;
+        var dy = partB.y - partA.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+
+        if(dist < minDist) {
+
+            var alpha = 1 - dist / minDist;
+            context.strokeStyle = Utils.colorToRGB('#ffffff', alpha);
+            context.beginPath();
+            context.moveTo(partA.x, partA.y);
+            context.lineTo(partB.x, partB.y);
+            context.stroke();
+
+            var ax = dx * springAmount;
+            var ay = dy * springAmount;
+            partA.vx += ax;
+            partA.vy += ay;
+            partB.vx -= ax;
+            partB.vy -= ay;
+        }
+    }
+
+    function move(partA, i) {
+        partA.x += partA.vx;
+        partA.y += partA.vy;
+
+        if (partA.x > width) {
+            partA.x = 0;
+        } else if (partA.x < 0) {
+            partA.x = width;
+        }
+
+        if (partA.y > height) {
+            partA.y = 0;
+        } else if (partA.y < 0) {
+            partA.y = height;
+        }
+
+        for (var partB, j = i + 1; j < numParticles; j++) {
+            partB = particles[j];
+            spring(partA, partB);
+        }
+    }
+
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+        particles.forEach(move);
+        particles.forEach(draw);
+    })();
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

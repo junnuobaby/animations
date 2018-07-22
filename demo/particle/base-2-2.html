@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>万有引力</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <style>
+        body {
+            background: #000;
+        }
+        canvas {
+            border: 1px solid rgba(221, 221, 221, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="1200" height="800" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var particles = [];
+    var numParticles = 10;
+
+    for (var particle, i = 0; i < numParticles; i++) {
+        particle = new Ball(5);
+        particle.x = Math.random() * width;
+        particle.y = Math.random() * height;
+        particle.mass = 1;
+        particles.push(particle);
+    }
+
+   function draw(particle) {
+       particle.draw(context);
+   }
+
+
+   function move(partA, i) {
+        partA.x += partA.vx;
+        partA.y += partA.vy;
+
+        for (var partB, j=i+1; j < numParticles; j++) {
+            partB = particles[j];
+            gravitate(partA, partB);
+        }
+   }
+
+   function gravitate(partA, partB) {
+       var dx = partA.x - partB.x;
+       var dy = partA.y - partB.y;
+       var distSQ = dx * dx + dy * dy;
+       var dist = Math.sqrt(distSQ);
+       var force = partA.mass * partB.mass / distSQ;
+       var ax = force * dx / dist;
+       var ay = force * dy / dist;
+
+       context.strokeStyle = "rgba(255, 255, 255, 0.5)";
+       context.beginPath();
+       context.moveTo(partA.x, partA.y);
+       context.lineTo(partB.x, partB.y);
+       context.stroke();
+
+       partA.vx += ax / partA.mass;
+       partA.vy += ay / partA.mass;
+       partB.vx -= ax / partB.mass;
+       partB.vy -= ay / partB.mass;
+
+   }
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+        particles.forEach(move);
+        particles.forEach(draw);
+    })();
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>单轴上的动量守恒</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/ball.js"></script>
+    <script src="/lib/line.js"></script>
+    <style>
+        body {
+            background: #000;
+        }
+        canvas {
+            border: 1px solid rgba(221, 221, 221, 0.55);
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <canvas width="800" height="600" id="canvas"></canvas>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var ball0 = new Ball();
+    var ball1 = new Ball();
+
+    ball0.mass = 20;
+    ball0.x = 50;
+    ball0.y = height/2;
+    ball0.vx = 5;
+
+    ball1.mass = 50;
+    ball1.x = 600;
+    ball1.y = height/2;
+    ball1.vx = -1;
+
+    (function drawFrame() {
+        window.requestAnimationFrame(drawFrame);
+        context.clearRect(0, 0, width, height);
+
+        ball0.x += ball0.vx;
+        ball1.x += ball1.vx;
+
+
+        var dist = ball1.x - ball0.x;
+
+        if (Math.abs(dist) < ball0.radius + ball1.radius) {
+            var vxTotal = ball0.vx - ball1.vx;
+            ball0.vx = ((ball0.mass - ball1.mass) * ball0.vx + 2 * ball1.mass * ball1.vx) / (ball0.mass + ball1.mass);
+            ball1.vx = vxTotal + ball0.vx;
+
+            ball0.x += ball0.vx;
+            ball1.x += ball1.vx;
+        }
+
+        ball0.draw(context);
+        ball1.draw(context);
+
+    })();
+
+
+</script>

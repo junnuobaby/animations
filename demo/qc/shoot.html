@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/lib/utils.js"></script>
+    <script src="/lib/shoot.js"></script>
+    <style>
+        body {
+            background: url("./image/star.jpeg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+
+        canvas {
+        }
+    </style>
+</head>
+<body>
+<canvas id="demo" width="1300" height="800"></canvas>
+</body>
+</html>
+
+
+<script>
+
+    var canvas = document.getElementById('demo');
+    var context = canvas.getContext('2d');
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var x = 0;
+    var y = 0;
+    var starNum = 100;
+    var stars = [];
+    var shoot;
+
+    for(var i = 0; i < starNum; i++) {
+        x = Math.random() * width;
+        y = Math.random() * height / 2;
+        speed = Math.random() * 2 + 1;
+        shoot = new Shoot(x, y);
+        shoot.vx = speed;
+        shoot.vy = speed;
+        stars.push(shoot);
+    }
+
+    (function draw() {
+        window.requestAnimationFrame(draw);
+
+        context.save();
+        context.fillStyle = "rgba(109, 45, 166, 0.8)";
+        context.globalCompositeOperation = 'destination-in';
+        context.fillRect(0, 0,  width, height);
+        context.restore();
+
+
+        stars.forEach(function (star) {
+            star.x += star.vx;
+            star.y += star.vy;
+
+            if (star.x > width || star.y > height) {
+                star.x = Math.random() * width/2;
+                star.y = Math.random() * height / 10;
+            }
+
+            star.draw(context);
+        });
+
+    })()
+
+
+</script>
