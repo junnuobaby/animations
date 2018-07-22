@@ -2,3 +2,4 @@
 *.log
 .history
 node_modules
+build
